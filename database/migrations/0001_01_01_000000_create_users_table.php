@@ -11,13 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Tabel Divisi harus dibuat terlebih dahulu karena users mereferensikannya
+        Schema::create('divisi', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_divisi', 100);
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->foreignId('divisi_id')->nullable()->constrained('divisi')->nullOnDelete();
+            $table->string('nama_lengkap', 150);
+            $table->string('email', 150)->unique();
+            $table->string('password', 255);
+            $table->string('nomor_telepon', 20)->nullable();
+            $table->enum('peran', ['ketua_spmb', 'panitia'])->default('panitia');
             $table->timestamps();
         });
 
@@ -42,8 +51,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('divisi');
     }
 };
