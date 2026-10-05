@@ -6,7 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Login - SIM Monitoring Kinerja Panitia SPMB">
     <title>Login - SIM Monitoring SPMB</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    @endif
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex items-center justify-center p-4">
 
@@ -64,16 +69,25 @@
                             </svg>
                         </div>
                         <input id="password" name="password" type="password" required
-                            class="w-full pl-9 pr-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50/50 text-sm text-slate-800 placeholder-slate-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
+                            class="w-full pl-9 pr-10 py-2 rounded-lg border border-slate-200 bg-slate-50/50 text-sm text-slate-800 placeholder-slate-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
                             placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility()" id="toggle-password-btn" title="Tampilkan / Sembunyikan Password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-700 focus:outline-none">
+                            <svg id="eye-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg id="eye-slash-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
                 {{-- Remember Me --}}
                 <div class="flex items-center gap-2">
                     <input id="remember" name="remember" type="checkbox"
-                        class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20">
-                    <label for="remember" class="text-xs text-slate-600">Ingat saya</label>
+                        class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20 cursor-pointer">
+                    <label for="remember" class="text-xs text-slate-600 cursor-pointer select-none">Ingat saya</label>
                 </div>
 
                 {{-- Submit --}}
@@ -170,6 +184,22 @@
         function fillLogin(email, password) {
             document.getElementById('email').value = email;
             document.getElementById('password').value = password;
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeSlashIcon = document.getElementById('eye-slash-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                if (eyeIcon) eyeIcon.classList.remove('hidden');
+                if (eyeSlashIcon) eyeSlashIcon.classList.add('hidden');
+            } else {
+                passwordInput.type = 'password';
+                if (eyeIcon) eyeIcon.classList.add('hidden');
+                if (eyeSlashIcon) eyeSlashIcon.classList.remove('hidden');
+            }
         }
     </script>
 
